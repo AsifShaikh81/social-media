@@ -16,7 +16,7 @@ const Login = () => {
       {/* left side : Brand */}
       <div className="flex-1 flex flex-col items-start justify-between p-6 md:p-10 lg:pl-40">
         {/* Logo at top */}
-        <img src={assets.logo} alt="" className="h-12 object-contain" />
+        <img src={assets.logo} alt="" className="w-100 ml-[-95px]" />
 
         {/* Bottom-left users section */}
         <div>

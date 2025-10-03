@@ -3,3 +3,8 @@
 *{
    font-family: "Outfit", sans-serif;
 }
+
+/* Hide scrollbar below story card */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}  

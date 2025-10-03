@@ -17,12 +17,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       } transition-all duration-300 ease-in-out`}
     >
       <div className="w-full">
+        <div className='ml-8'>
         <img
           src={assets.logo}
-          className="w-26 ml-7 my-2 cursor-pointer"
+          className="w-50 object-contain sm:ml-[-25px] md:ml-[-25px] cursor-pointer"
           alt=""
           onClick={() => navigate("/")}
         />
+        </div>
         <hr className="border-gray-300 mb-8" />
 
         <MenuItems setSidebarOpen={setSidebarOpen} />
