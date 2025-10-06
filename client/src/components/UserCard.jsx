@@ -12,7 +12,7 @@ const UserCard = ({ user }) => {
       key={user._id}
       className="p-4 pt-6 flex flex-col justify-between w-72 shadow border border-gray-200 rounded-md"
     >
-      <div className="text-center">
+      <div className="text-center"> 
         <img
           src={user.profile_picture}
           alt=""
