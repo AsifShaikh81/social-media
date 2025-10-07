@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
 import ChatBox from './pages/ChatBox'
@@ -8,11 +8,21 @@ import Connections from './pages/Connections'
 import Discover from './pages/Discover'
 import Profile from './pages/Profile'
  import CreatePost from './pages/CreatePost'
-import { useUser } from '@clerk/clerk-react'
+import { useUser, useAuth } from '@clerk/clerk-react'
 import  Layout  from './pages/Layout'
 import{Toaster} from 'react-hot-toast'
 const App = () => {
-  const {user} = useUser() // to checj user is there or not
+  const {user} = useUser() // to checkuser is there or not
+  const {getToken} = useAuth() // to get the token
+ 
+  
+  useEffect(()=>{
+    // to get the token in console if user is there
+    if(user){
+      getToken().then((token)=>console.log(token));
+      
+    }
+  },[user]) 
   return (
     <>
     <Toaster/>
