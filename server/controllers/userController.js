@@ -2,6 +2,7 @@ import imagekit from "../configs/imageKit.js"
 
 import { clerkClient } from "@clerk/express";
 import User from "../models/User.js"
+import Post from "../models/Post.js";
 import Connection from '../models/Connection.js'
 import fs from 'fs'
 // Get User Data using userId
@@ -204,7 +205,7 @@ export const sendConnectionRequest = async (req, res) => {
                 from_user_id: userId,
                 to_user_id: id
             })
-
+            // trigger inngest function to send email 
             await inngest.send({
                 name: 'app/connection-request',
                 data: {connectionId: newConnection._id}
@@ -294,3 +295,5 @@ export const getUserProfiles = async (req, res) =>{
         res.json({success: false, message: error.message})
     }
 }
+
+ 
