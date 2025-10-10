@@ -4,11 +4,18 @@ import Sidebar  from '../components/Sidebar'
 import { Menu, X } from 'lucide-react'
 import { dummyUserData } from '../assets/assets'
 import Loading from '../components/Loading'
+import { useSelector } from 'react-redux'
+
+
 
 const Layout = () => {
-  const user = dummyUserData
+ 
+  // const user = dummyUserData
+  const user =  useSelector((state) => state.user.value) // get the user from the redux store
+  console.log("User from Redux:", user);
   const [sidebarOpen ,setSidebarOpen] = useState(false)
-  return user ? (
+   // 👇 Add this line here
+   return user ? (
     <div className='w-full flex h-screen'>
     <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
     <div className='flex-1 bg-slate-50'>

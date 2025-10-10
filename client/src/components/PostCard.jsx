@@ -1,18 +1,43 @@
 import React from 'react'
 import { BadgeCheck,Heart,MessageCircle,Share2 } from 'lucide-react'
 import moment from 'moment'
-import { useState,useSelector } from 'react'
+import { useState } from 'react'
 import { dummyUserData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'
+import { useAuth } from '@clerk/clerk-react'
+import { toast } from 'react-hot-toast';
+import api from '../api/axios.js'
 
 const PostCard = ({post}) => {
-    const postWithHashtags = post.content.replace(/(#\w+)/g, '<span class="text-indigo-600">$1</span>')
-    const [likes, setLikes] = useState(post.likes_count)
-    const currentUser = dummyUserData
+    const postWithHashtags = post.content
+  ? post.content.replace(/(#\w+)/g, '<span class="text-indigo-600">$1</span>')
+  : console.log('errorrr');
+   const [likes, setLikes] = useState(post.likes_count)
+    // const currentUser = dummyUserData
+    const currentUser = useSelector((state) => state.user.value) // get the user from the redux store
     // const currentUser = useSelector((state) => state.user.value)
      const navigate = useNavigate();
-    const handleLike =async () => {
-        
+    const { getToken } = useAuth()
+    const handleLike = async () => {
+        try {
+            const { data } = await api.post(`/api/post/like`, {postId: post._id}, {headers: { Authorization: `Bearer ${await getToken()}` }})
+
+            if (data.success){
+            //    toast.success(data.message) 
+               setLikes(prev =>{
+                if(prev.includes(currentUser._id)){
+                    return prev.filter(id=> id !== currentUser._id)
+                }else{
+                    return [...prev, currentUser._id]
+                }
+               })
+            }else{
+                toast(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
   return (
     <div className='bg-white rounded-xl shadow p-4 w-full  max-w-2xl'>

@@ -1,9 +1,11 @@
 import React from "react";
 import { dummyUserData } from "../assets/assets";
 import { MapPin, MessageCircle, UserPlus, Plus } from "lucide-react";
+import { useSelector } from 'react-redux'
 
 const UserCard = ({ user }) => {
-  const currentUser = dummyUserData;
+  // const currentUser = dummyUserData;
+  const currentUser = useSelector((state) => state.user.value); // get the user from the redux store
 
   const handleFollow = async () => {};
   const handleConnectionRequest = async () => {};
