@@ -2,9 +2,12 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Eye, MessageSquare } from 'lucide-react';
 import { dummyConnectionsData } from '../assets/assets';
+import { useSelector } from 'react-redux';
 const Messages = () => {
   const navigate = useNavigate();
-  const connections = dummyConnectionsData;
+  // const connections = dummyConnectionsData;
+    const { connections } = useSelector((state)=>state.connections)
+
   return (
    <div className='min-h-screen relative bg-slate-50'>
       <div className='max-w-6xl mx-auto p-6'>

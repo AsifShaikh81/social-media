@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import {
   Users,
@@ -8,14 +8,24 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {
+/* import {
   dummyConnectionsData as connections,
   dummyFollowersData as followers,
   dummyFollowingData as following,
   dummyPendingConnectionsData as pendingConnections,
-} from "../assets/assets";
+} from "../assets/assets"; */
+import { useSelector,useDispatch } from "react-redux";
+import { useAuth } from "@clerk/clerk-react";
+import { fetchConnections } from "../features/connections/connectionSlice";
+import api from "../api/axios.js"
 const Connections = () => {
+  const { connections, pendingConnections, followers, following } = useSelector( 
+     (state) => state.connections
+   );
+
+   const {getToken} = useAuth()
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const [currentTab, setCurrentTab] = useState('Followers');
   const dataArray = [
     { label: "Followers", value: followers, icon: Users },
@@ -23,6 +33,51 @@ const Connections = () => {
     { label: "Pending", value: pendingConnections, icon: UserRoundPen },
     { label: "Connections", value: connections, icon: UserPlus },
   ];
+
+  const handleUnfollow = async (userId) => {
+    try {
+      const { data } = await api.post(
+        "/api/user/unfollow",
+        { id: userId },
+        {
+          headers: { Authorization: `Bearer ${await getToken()}` },
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(fetchConnections(await getToken()));
+      } else {
+        toast(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const acceptConnection = async (userId) => {
+    try {
+      const { data } = await api.post(
+        "/api/user/accept",
+        { id: userId },
+        {
+          headers: { Authorization: `Bearer ${await getToken()}` },
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        dispatch(fetchConnections(await getToken()));
+      } else {
+        toast(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  useEffect(()=>{
+    getToken().then((token)=>{
+      dispatch(fetchConnections(token))
+    })
+  },[])
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-6xl mx-auto p-6">

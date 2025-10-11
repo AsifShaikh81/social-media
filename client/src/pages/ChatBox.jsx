@@ -1,17 +1,82 @@
 import React, { useState, useRef, useEffect } from "react";
-
+import { useSelector, useDispatch } from "react-redux";
+import {useAuth } from '@clerk/clerk-react'
+import {useParams} from 'react-router-dom'
 import { dummyMessagesData, dummyUserData } from "../assets/assets";
 import { ImageIcon, SendHorizonal } from "lucide-react";
+import api from '../api/axios.js'
+import { addMessage, fetchMessages, resetMessages } from '../features/messages/messagesSlice'
+import {toast } from 'react-hot-toast'
 
 const ChatBox = () => {
-  const messages = dummyMessagesData;
+  // const messages = dummyMessagesData;
+  const {messages} = useSelector((state) => state.messages);
+  const dispatch = useDispatch();
+  const{getToken} = useAuth()
+  const { userId } = useParams();
+
+  
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [user, setUser] = useState(dummyUserData);
   const messagesEndRef = useRef(null); // for auto scolling when new message arrives
   //useRef is a React Hook that lets you:
   // store a value that does not cause re-render when it changes.
-  const sendMessage = async () => {};
+   const connections = useSelector((state) => state.connections.connections)
+
+  const fetchUserMessages = async () => {
+    try {
+      const token = await getToken()
+      dispatch(fetchMessages({token, userId}))
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  const sendMessage = async () => {
+    try {
+      if(!text && !image) return
+
+      const token = await getToken()
+      const formData = new FormData();
+      formData.append('to_user_id', userId)
+      formData.append('text', text);
+      image && formData.append('image', image);
+
+      const { data } = await api.post('/api/message/send', formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (data.success) {
+        setText('')
+        setImage(null)
+        dispatch(addMessage(data.message))
+      }else{
+        throw new Error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  useEffect(()=>{
+    fetchUserMessages()
+
+    return ()=>{
+      dispatch(resetMessages())
+    }
+  },[userId])
+
+  useEffect(()=>{
+    if(connections.length > 0){
+      const user = connections.find(connection => connection._id === userId)
+      setUser(user)
+    }
+  },[connections, userId])
+
+  useEffect(()=>{
+    messagesEndRef.current?.scrollIntoView({behavior: "smooth" })
+  },[messages])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -96,7 +161,7 @@ URL.createObjectURL() is a built-in JavaScript method that creates a temporary l
             onClick={sendMessage}
             className="bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-700 hover:to-purple-800 active:scale-95 cursor-pointer text-white p-2 rounded-full"
           >
-            <SendHorizonal size={18} /> // send icon
+            <SendHorizonal size={18} />
           </button>
         </div>
       </div>

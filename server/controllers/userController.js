@@ -1,5 +1,5 @@
 import imagekit from "../configs/imageKit.js"
-
+import {inngest} from "../inngest/index.js"
 import { clerkClient } from "@clerk/express";
 import User from "../models/User.js"
 import Post from "../models/Post.js";
